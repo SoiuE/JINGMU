@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Detail — JINGMU</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
+<div id="mobile-placeholder"></div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb" id="breadcrumb">
+    <a href="index.html">Home</a><span>›</span>
+    <a href="products.html">Products</a><span>›</span>
+    <span id="breadcrumbName">Product</span>
+</div>
+
+<!-- Product Detail -->
+<div class="detail-section" id="detailSection">
+    <!-- Rendered by JS -->
+</div>
+
+<!-- Related Products -->
+<section class="section" style="padding-top:0">
+    <h3 class="related-title">You May Also Like</h3>
+    <div class="related-grid" id="relatedGrid">
+        <!-- Rendered by JS -->
+    </div>
+</section>
+
+<!-- Footer -->
+<div id="footer-placeholder"></div>
+
+<!-- Login Modal -->
+<div id="login-placeholder"></div>
+
+<!-- Cart Panel -->
+<div id="cart-placeholder"></div>
+
+<!-- Toast -->
+<div id="toast-placeholder"></div>
+
+<!-- Scripts -->
+<script src="js/products-data.js"></script>
+<script src="js/common.js"></script>
+<script>
+/* ===== PAGE INIT ===== */
+initCommon('products');
+
+var detailQty = 1;
+var productId = parseInt(getUrlParam('id'));
+var product = getProductById(productId);
+
+/* If product not found, redirect to products page */
+if (!product) {
+    window.location.href = 'products.html';
+}
+
+/* Set page title */
+if (product) {
+    document.title = product.name + ' — JINGMU';
+    document.getElementById('breadcrumbName').textContent = product.name;
+}
+
+/* Render product detail */
+function renderDetail() {
+    if (!product) return;
+    var section = document.getElementById('detailSection');
+    var favs = getFavorites();
+    var isFav = favs.indexOf(product.id) !== -1;
+
+    section.innerHTML =
+        '<div class="detail-grid">' +
+        '<div class="detail-image">' +
+        '<img src="' + product.img + '" alt="' + product.name + '">' +
+        '</div>' +
+        '<div class="detail-info">' +
+        '<div class="detail-category">' + product.categoryLabel + '</div>' +
+        '<h1 class="detail-name">' + product.name + '</h1>' +
+        '<div class="detail-price">$' + product.price.toFixed(2) + '</div>' +
+        '<p class="detail-desc">' + product.description + '</p>' +
+        '<div class="detail-qty-row">' +
+        '<span class="detail-qty-label">Quantity:</span>' +
+        '<div class="detail-qty-controls">' +
+        '<button class="detail-qty-btn" id="qtyMinus">&#8722;</button>' +
+        '<span class="detail-qty-val" id="qtyVal">' + detailQty + '</span>' +
+        '<button class="detail-qty-btn" id="qtyPlus">&#43;</button>' +
+        '</div></div>' +
+        '<div class="detail-actions">' +
+        '<button class="detail-add-cart" id="detailAddCart">&#128722; Add to Cart</button>' +
+        '<button class="detail-fav-btn ' + (isFav ? 'active' : '') + '" id="detailFavBtn">' +
+        (isFav ? '&#10084; Saved' : '&#9825; Favorite') + '</button>' +
+        '</div></div></div>';
+
+    /* Bind detail events */
+    document.getElementById('qtyMinus').addEventListener('click', function () {
+        if (detailQty > 1) {
+            detailQty--;
+            document.getElementById('qtyVal').textContent = detailQty;
+        }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', function () {
+        detailQty++;
+        document.getElementById('qtyVal').textContent = detailQty;
+    });
+    document.getElementById('detailAddCart').addEventListener('click', function () {
+        addToCart(product.id, detailQty);
+    });
+    document.getElementById('detailFavBtn').addEventListener('click', function () {
+        toggleFav(product.id);
+    });
+}
+
+/* Render related products (same category, exclude current) */
+function renderRelated() {
+    if (!product) return;
+    var grid = document.getElementById('relatedGrid');
+    var related = PRODUCTS.filter(function (p) {
+        return p.category === product.category && p.id !== product.id;
+    });
+    /* If not enough in same category, fill from others */
+    if (related.length < 4) {
+        var others = PRODUCTS.filter(function (p) {
+            return p.id !== product.id && related.indexOf(p) === -1;
+        });
+        related = related.concat(others).slice(0, 4);
+    }
+    var favs = getFavorites();
+    grid.innerHTML = related.map(function (p) {
+        var isFav = favs.indexOf(p.id) !== -1;
+        return '<div class="product-card">' +
+            '<a href="product.html?id=' + p.id + '" class="product-card-img">' +
+            '<img src="' + p.img + '" alt="' + p.name + '"></a>' +
+            '<div class="product-info">' +
+            '<div class="product-name"><a href="product.html?id=' + p.id + '">' + p.name + '</a></div>' +
+            '<div class="product-price">$' + p.price.toFixed(2) + '</div>' +
+            '<div class="product-actions">' +
+            '<button class="btn-sm btn-fav ' + (isFav ? 'active' : '') + '" data-fav="' + p.id + '">' +
+            (isFav ? '&#10084; Saved' : '&#9825; Favorite') + '</button>' +
+            '<button class="btn-sm btn-cart" data-cart="' + p.id + '">&#128722; Add to Cart</button>' +
+            '</div></div></div>';
+    }).join('');
+}
+
+/* Event delegation for related products */
+document.addEventListener('click', function (e) {
+    var favBtn = e.target.closest('[data-fav]');
+    if (favBtn) {
+        toggleFav(parseInt(favBtn.dataset.fav));
+        renderRelated();
+        return;
+    }
+    var cartBtn = e.target.closest('[data-cart]');
+    if (cartBtn) { addToCart(parseInt(cartBtn.dataset.cart)); return; }
+});
+
+renderDetail();
+renderRelated();
+</script>
+</body>
+</html>

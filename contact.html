@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — JINGMU</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
+<div id="mobile-placeholder"></div>
+
+<!-- Page Hero -->
+<div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <h1>Contact Us</h1>
+</div>
+
+<!-- Contact Content -->
+<section class="section">
+    <p class="section-sub">We'd love to hear from you — reach out for wholesale inquiries, partnerships, or any questions</p>
+    <div class="contact-grid">
+        <div class="contact-info">
+            <h3>Get in Touch</h3>
+            <p><strong>Company:</strong> HONG KONG JINGMU LIMITED</p>
+            <p><strong>Contact:</strong> ZHANG JIE</p>
+            <p><strong>Email:</strong> info@jingmu.pro</p>
+            <p><strong>Phone:</strong> 54161867</p>
+            <p><strong>Address:</strong> FLAT/RM B 5/F GAYLORD COMMERCIAL BUILDING 114-118 LOCKHART ROAD HK</p>
+            <p style="margin-top:20px;color:var(--text-light);font-size:.88rem;line-height:1.8">
+                Business Hours: Monday – Friday, 9:00 AM – 6:00 PM (HKT)<br>
+                We typically respond within 24 hours.
+            </p>
+            <div style="margin-top:28px;padding:24px;background:var(--cream-dark);border-radius:16px">
+                <h4 style="color:var(--text-main);font-size:1rem;margin-bottom:10px">Wholesale Inquiries</h4>
+                <p style="color:var(--text-light);font-size:.88rem;line-height:1.7">We offer special pricing for bulk orders and wholesale partnerships. Contact us with your requirements and our team will provide a customized quote within 24 hours.</p>
+            </div>
+        </div>
+        <form class="contact-form" id="contactForm">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <input type="text" placeholder="Subject">
+            <textarea placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</section>
+
+<!-- Footer -->
+<div id="footer-placeholder"></div>
+
+<!-- Login Modal -->
+<div id="login-placeholder"></div>
+
+<!-- Cart Panel -->
+<div id="cart-placeholder"></div>
+
+<!-- Toast -->
+<div id="toast-placeholder"></div>
+
+<!-- Scripts -->
+<script src="js/products-data.js"></script>
+<script src="js/common.js"></script>
+<script>
+initCommon('contact');
+
+/* Contact form submit */
+document.getElementById('contactForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    showToast('Message sent successfully! We will reply within 24 hours.');
+    this.reset();
+});
+</script>
+</body>
+</html>

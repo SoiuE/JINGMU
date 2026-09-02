@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd *)",
+      "Bash(curl -sL -o test.jpg \"https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80\")",
+      "Bash(rm test.jpg)",
+      "Bash(curl -sL -o product10.jpg \"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop&q=80\")",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(sort -k2)"
+    ]
+  }
+}

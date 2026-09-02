@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — JINGMU</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div id="nav-placeholder"></div>
+<div id="mobile-placeholder"></div>
+
+<!-- Page Hero -->
+<div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <h1>Our Products</h1>
+</div>
+
+<!-- Filter + Product Grid -->
+<section class="section">
+    <div class="filter-tabs" id="filterTabs">
+        <!-- Rendered by JS -->
+    </div>
+    <div class="products-grid" id="productsGrid">
+        <!-- Rendered by JS -->
+    </div>
+</section>
+
+<!-- Footer -->
+<div id="footer-placeholder"></div>
+
+<!-- Login Modal -->
+<div id="login-placeholder"></div>
+
+<!-- Cart Panel -->
+<div id="cart-placeholder"></div>
+
+<!-- Toast -->
+<div id="toast-placeholder"></div>
+
+<!-- Scripts -->
+<script src="js/products-data.js"></script>
+<script src="js/common.js"></script>
+<script>
+/* ===== PAGE INIT ===== */
+initCommon('products');
+
+var currentFilter = 'all';
+
+/* Check URL for category param */
+var urlCat = getUrlParam('cat');
+if (urlCat) currentFilter = urlCat;
+
+/* Render filter tabs */
+function renderTabs() {
+    var container = document.getElementById('filterTabs');
+    if (!container) return;
+    container.innerHTML = CATEGORIES.map(function (cat) {
+        return '<button class="filter-tab ' + (cat.key === currentFilter ? 'active' : '') +
+            '" data-filter="' + cat.key + '">' + cat.label + '</button>';
+    }).join('');
+}
+
+/* Render product grid */
+function renderProducts() {
+    var grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    var favs = getFavorites();
+    var filtered = currentFilter === 'all' ? PRODUCTS :
+        PRODUCTS.filter(function (p) { return p.category === currentFilter; });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:var(--text-light);grid-column:1/-1;padding:40px 0">No products found in this category.</p>';
+        return;
+    }
+
+    grid.innerHTML = filtered.map(function (p) {
+        var isFav = favs.indexOf(p.id) !== -1;
+        return '<div class="product-card">' +
+            '<a href="product.html?id=' + p.id + '" class="product-card-img">' +
+            '<img src="' + p.img + '" alt="' + p.name + '"></a>' +
+            '<div class="product-info">' +
+            '<div class="product-name"><a href="product.html?id=' + p.id + '">' + p.name + '</a></div>' +
+            '<div class="product-price">$' + p.price.toFixed(2) + '</div>' +
+            '<div class="product-actions">' +
+            '<button class="btn-sm btn-fav ' + (isFav ? 'active' : '') + '" data-fav="' + p.id + '">' +
+            (isFav ? '&#10084; Saved' : '&#9825; Favorite') + '</button>' +
+            '<button class="btn-sm btn-cart" data-cart="' + p.id + '">&#128722; Add to Cart</button>' +
+            '</div></div></div>';
+    }).join('');
+}
+
+/* Filter click events */
+document.addEventListener('click', function (e) {
+    /* Filter tabs */
+    var tab = e.target.closest('[data-filter]');
+    if (tab) {
+        currentFilter = tab.dataset.filter;
+        renderTabs();
+        renderProducts();
+        return;
+    }
+    /* Favorites */
+    var favBtn = e.target.closest('[data-fav]');
+    if (favBtn) { toggleFav(parseInt(favBtn.dataset.fav)); return; }
+    /* Cart */
+    var cartBtn = e.target.closest('[data-cart]');
+    if (cartBtn) { addToCart(parseInt(cartBtn.dataset.cart)); return; }
+});
+
+renderTabs();
+renderProducts();
+</script>
+</body>
+</html>
